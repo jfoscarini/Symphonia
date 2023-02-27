@@ -4,8 +4,10 @@
 #include <memory>
 #include <vector>
 #include <deque>
+#include <unordered_map>
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
 
 #include "Screen.h"
@@ -21,6 +23,9 @@ namespace sym {
 
         static std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)> window;
         static std::unique_ptr<SDL_Renderer, decltype(&SDL_DestroyRenderer)> renderer;
+
+        static std::unordered_map<std::string, std::unique_ptr<TTF_Font, decltype(&TTF_CloseFont)>> fonts;
+        [[maybe_unused]] static void loadFont(const std::string &name, int size, const std::string &path);
 
         static std::deque<std::unique_ptr<Screen>> new_screens;
 

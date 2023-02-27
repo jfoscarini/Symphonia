@@ -2,14 +2,12 @@
 #include <string>
 #include <algorithm>
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_mixer.h>
-
 #include "Game.h"
 
 std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)> sym::Game::window(nullptr, SDL_DestroyWindow);
 std::unique_ptr<SDL_Renderer, decltype(&SDL_DestroyRenderer)> sym::Game::renderer(nullptr, SDL_DestroyRenderer);
+
+std::unordered_map<std::string, std::unique_ptr<TTF_Font, decltype(&TTF_CloseFont)>> sym::Game::fonts;
 
 std::deque<std::unique_ptr<sym::Screen>> sym::Game::new_screens;
 
@@ -48,6 +46,8 @@ sym::Game::~Game() {
     screens.clear();
     new_screens.clear();
 
+    fonts.clear();
+
     renderer.reset();
     window.reset();
 
@@ -77,6 +77,17 @@ void sym::Game::run() {
 
         SDL_RenderPresent(renderer.get());
     }
+}
+
+[[maybe_unused]] void sym::Game::loadFont(const std::string &name, int size, const std::string &path) {
+    std::unique_ptr<TTF_Font, decltype(&TTF_CloseFont)> font(
+            TTF_OpenFont(path.c_str(), size),
+            &TTF_CloseFont);
+
+    if (!font)
+        throw std::runtime_error("Could not load font: " + path);
+
+    fonts.emplace(name, std::move(font));
 }
 
 bool sym::Game::isRunning() {
