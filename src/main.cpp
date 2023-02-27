@@ -1,6 +1,12 @@
-#include <iostream>
+#include "../lib/Game.h"
+#include "screens/TitleScreen.h"
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+    auto game = sym::Game();
+
+    sym::Game::new_screens.push_back(std::make_unique<TitleScreen>());
+
+    game.run();
+
     return 0;
 }
