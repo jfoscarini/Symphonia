@@ -42,6 +42,7 @@ void sym::ui::Text::setText(const std::string &text) {
     if (!texture) return;
 
     switch (target) {
+        case Anchor::None:
         case Anchor::TopLeft:
             setPosition({0, 0});
             break;

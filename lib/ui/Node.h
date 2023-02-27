@@ -8,6 +8,7 @@
 namespace sym::ui {
 
     enum class Anchor {
+        None,
         TopLeft,
         Top,
         TopRight,

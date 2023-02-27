@@ -15,6 +15,7 @@
     SDL_GetRendererOutputSize(Game::renderer.get(), &width, &height);
 
     switch (target) {
+        case Anchor::None:
         case Anchor::TopLeft:
             node_position = {0, 0};
             break;
