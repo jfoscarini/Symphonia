@@ -27,6 +27,9 @@ namespace sym {
         static std::unordered_map<std::string, std::unique_ptr<TTF_Font, decltype(&TTF_CloseFont)>> fonts;
         [[maybe_unused]] static void loadFont(const std::string &name, int size, const std::string &path);
 
+        static std::unordered_map<std::string, std::unique_ptr<SDL_Texture, decltype(&SDL_DestroyTexture)>> textures;
+        [[maybe_unused]] static SDL_Texture *loadTexture(const std::string &name, const std::string &path);
+
         static std::deque<std::unique_ptr<Screen>> new_screens;
 
     private:

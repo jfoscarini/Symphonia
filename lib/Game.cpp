@@ -2,12 +2,15 @@
 #include <string>
 #include <algorithm>
 
+#include <SDL2/SDL_image.h>
+
 #include "Game.h"
 
 std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)> sym::Game::window(nullptr, SDL_DestroyWindow);
 std::unique_ptr<SDL_Renderer, decltype(&SDL_DestroyRenderer)> sym::Game::renderer(nullptr, SDL_DestroyRenderer);
 
 std::unordered_map<std::string, std::unique_ptr<TTF_Font, decltype(&TTF_CloseFont)>> sym::Game::fonts;
+std::unordered_map<std::string, std::unique_ptr<SDL_Texture, decltype(&SDL_DestroyTexture)>> sym::Game::textures;
 
 std::deque<std::unique_ptr<sym::Screen>> sym::Game::new_screens;
 
@@ -88,6 +91,23 @@ void sym::Game::run() {
         throw std::runtime_error("Could not load font: " + path);
 
     fonts.emplace(name, std::move(font));
+}
+
+[[maybe_unused]] SDL_Texture *sym::Game::loadTexture(const std::string &name, const std::string &path) {
+    SDL_Surface *surface = IMG_Load(path.c_str());
+    if (!surface)
+        throw std::runtime_error("Could not load texture: " + path);
+
+    std::unique_ptr<SDL_Texture, decltype(&SDL_DestroyTexture)> texture(
+            SDL_CreateTextureFromSurface(renderer.get(), surface), &SDL_DestroyTexture);
+
+    SDL_FreeSurface(surface);
+
+    if (!texture)
+        throw std::runtime_error("could not create texture from surface: " + path);
+
+    textures.emplace(name, std::move(texture));
+    return textures.find(name)->second.get();
 }
 
 bool sym::Game::isRunning() {
