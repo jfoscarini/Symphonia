@@ -27,9 +27,10 @@ namespace sym::ui {
 
         [[maybe_unused]] void setPosition(SDL_Point offset);
         SDL_Point position();
+
     private:
         Node *node_parent = nullptr;
-        SDL_Point node_position {0, 0};
+        SDL_Point node_position{0, 0};
     };
 
 }
