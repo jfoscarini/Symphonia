@@ -31,6 +31,7 @@ namespace sym::ui {
 
     private:
         Node *node_parent = nullptr;
+        Anchor node_anchor = Anchor::None;
         SDL_Point node_position{0, 0};
     };
 
