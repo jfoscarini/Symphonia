@@ -14,6 +14,8 @@ std::unordered_map<std::string, std::unique_ptr<SDL_Texture, decltype(&SDL_Destr
 
 std::deque<std::unique_ptr<sym::Screen>> sym::Game::new_screens;
 
+std::pair<float, float> sym::Game::pixel_per_pixel;
+
 sym::Game::Game() {
     if (SDL_Init(sdl_flags) != 0)
         throw std::runtime_error("Could not initialize SDL: " + std::string(SDL_GetError()));
@@ -71,7 +73,10 @@ void sym::Game::run() {
 
         screen = screens.back().get();
 
-        while (SDL_PollEvent(&event)) screen->input(event);
+        while (SDL_PollEvent(&event)) {
+            handleEvents(event);
+            screen->input(event);
+        }
         screen->update();
         screen->draw();
 
@@ -110,6 +115,13 @@ void sym::Game::run() {
     return textures.find(name)->second.get();
 }
 
+SDL_Point sym::Game::getRelativeMousePosition(int x, int y) {
+    return {
+            static_cast<int>(static_cast<float>(x) * pixel_per_pixel.first),
+            static_cast<int>(static_cast<float>(y) * pixel_per_pixel.second)
+    };
+}
+
 bool sym::Game::isRunning() {
     SDL_PumpEvents();
     return SDL_PeepEvents(nullptr, 1, SDL_PEEKEVENT, SDL_QUIT, SDL_QUIT) == 0 && !screens.empty();
@@ -120,5 +132,18 @@ void sym::Game::populateScreens() {
     while(!new_screens.empty()) {
         screens.push_back(std::move(new_screens.front()));
         new_screens.pop_front();
+    }
+}
+
+void sym::Game::handleEvents(SDL_Event &event) const {
+    if (event.window.event == SDL_WINDOWEVENT_RESIZED || event.window.event == SDL_WINDOWEVENT_SHOWN) {
+        int current_window_width, current_window_height;
+        int renderer_width, renderer_height;
+        SDL_GetWindowSize(Game::window.get(), &current_window_width, &current_window_height);
+        SDL_GetRendererOutputSize(Game::renderer.get(), &renderer_width, &renderer_height);
+
+        pixel_per_pixel = std::make_pair(
+                static_cast<float>(renderer_width) / static_cast<float>(window_width),
+                static_cast<float>(renderer_height) / static_cast<float>(window_height));
     }
 }

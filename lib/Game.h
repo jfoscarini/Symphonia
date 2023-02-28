@@ -21,6 +21,8 @@ namespace sym {
 
         void run();
 
+        static SDL_Point getRelativeMousePosition(int x, int y);
+
         static std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)> window;
         static std::unique_ptr<SDL_Renderer, decltype(&SDL_DestroyRenderer)> renderer;
 
@@ -35,6 +37,8 @@ namespace sym {
     private:
         bool isRunning();
         void populateScreens();
+
+        void handleEvents(SDL_Event &event) const;
 
         std::vector<std::unique_ptr<Screen>> screens;
 
@@ -51,6 +55,7 @@ namespace sym {
         const char* window_title = "Symhponia";
         const int minimum_width = 640, window_width = 640;
         const int minimum_height = 480, window_height = 480;
+        static std::pair<float, float> pixel_per_pixel;
     };
 
 }
