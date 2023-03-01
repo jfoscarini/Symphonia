@@ -20,8 +20,8 @@ namespace sym::ui {
         bool visible = true;
         bool enabled = true;
 
-        void input(SDL_Event &event);
-        void draw();
+        [[maybe_unused]] void input(SDL_Event &event);
+        [[maybe_unused]] void draw();
 
         [[maybe_unused]] void setTexture(Interaction status, SDL_Texture *texture);
 

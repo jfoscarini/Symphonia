@@ -1,7 +1,7 @@
 #include "Button.h"
 #include "../Game.h"
 
-void sym::ui::Button::input(SDL_Event &event) {
+[[maybe_unused]] void sym::ui::Button::input(SDL_Event &event) {
     if (!enabled) return;
     if (event.type != SDL_MOUSEMOTION && event.type != SDL_MOUSEBUTTONDOWN && event.type != SDL_MOUSEBUTTONUP)
         return;
@@ -27,7 +27,7 @@ void sym::ui::Button::input(SDL_Event &event) {
     }
 }
 
-void sym::ui::Button::draw() {
+[[maybe_unused]] void sym::ui::Button::draw() {
     if (!visible) return;
 
     SDL_Rect target = rect;
@@ -50,7 +50,7 @@ void sym::ui::Button::draw() {
     }
 }
 
-void sym::ui::Button::setTexture(sym::ui::Interaction status, SDL_Texture *new_texture) {
+[[maybe_unused]] void sym::ui::Button::setTexture(sym::ui::Interaction status, SDL_Texture *new_texture) {
     switch (status) {
         case Interaction::None:
             SDL_QueryTexture(new_texture, nullptr, nullptr, &rect.w, &rect.h);
