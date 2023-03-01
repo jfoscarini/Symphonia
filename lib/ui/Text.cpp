@@ -9,9 +9,8 @@
 }
 
 void sym::ui::Text::setFont(const std::string &font_name) {
-    auto it = Game::fonts.find(font_name);
-    if (it != Game::fonts.end()) font = it->second.get();
-    else SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "Could not find font: \"%s\".", font_name.c_str());
+    font = Game::get<TTF_Font *>(font_name);
+    if (!font) SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "Could not find font: \"%s\".", font_name.c_str());
 }
 
 void sym::ui::Text::setText(const std::string &text) {

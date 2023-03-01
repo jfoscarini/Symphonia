@@ -87,18 +87,26 @@ void sym::Game::run() {
     }
 }
 
-[[maybe_unused]] void sym::Game::loadFont(const std::string &name, int size, const std::string &path) {
-    std::unique_ptr<TTF_Font, decltype(&TTF_CloseFont)> font(
-            TTF_OpenFont(path.c_str(), size),
-            &TTF_CloseFont);
-
-    if (!font)
-        throw std::runtime_error("Could not load font: " + path);
-
-    fonts.emplace(name, std::move(font));
+SDL_Point sym::Game::getRelativeMousePosition(int x, int y) {
+    return {
+            static_cast<int>(static_cast<float>(x) * pixel_per_pixel.first),
+            static_cast<int>(static_cast<float>(y) * pixel_per_pixel.second)
+    };
 }
 
-[[maybe_unused]] SDL_Texture *sym::Game::loadTexture(const std::string &name, const std::string &path) {
+template<typename T, typename... Args>
+[[maybe_unused]] T sym::Game::load(
+        [[maybe_unused]] const std::string &name,
+        [[maybe_unused]] const std::string &path,
+        [[maybe_unused]] Args... args) {
+    return nullptr;
+}
+
+template<>
+[[maybe_unused]] SDL_Texture *sym::Game::load(const std::string &name, const std::string &path) {
+    auto it = textures.find(name);
+    if (it != textures.end()) return it->second.get();
+
     SDL_Surface *surface = IMG_Load(path.c_str());
     if (!surface)
         throw std::runtime_error("Could not load texture: " + path);
@@ -115,11 +123,79 @@ void sym::Game::run() {
     return textures.find(name)->second.get();
 }
 
-SDL_Point sym::Game::getRelativeMousePosition(int x, int y) {
-    return {
-            static_cast<int>(static_cast<float>(x) * pixel_per_pixel.first),
-            static_cast<int>(static_cast<float>(y) * pixel_per_pixel.second)
-    };
+template<>
+[[maybe_unused]] TTF_Font *sym::Game::load(const std::string &name, const std::string &path, int args) {
+    auto it = fonts.find(name);
+    if (it != fonts.end()) return it->second.get();
+
+    std::unique_ptr<TTF_Font, decltype(&TTF_CloseFont)> font(
+            TTF_OpenFont(path.c_str(), args),
+            &TTF_CloseFont);
+
+    if (!font)
+        throw std::runtime_error("Could not load font: " + path);
+
+    fonts.emplace(name, std::move(font));
+    return fonts.find(name)->second.get();
+}
+
+template<typename T>
+[[maybe_unused]] T sym::Game::get([[maybe_unused]] const std::string &name) {
+    return nullptr;
+}
+
+template<>
+[[maybe_unused]] SDL_Texture *sym::Game::get(const std::string &name) {
+    auto it = textures.find(name);
+    if (it == textures.end()) return nullptr;
+
+    return it->second.get();
+}
+
+template<>
+[[maybe_unused]] TTF_Font *sym::Game::get(const std::string &name) {
+    auto it = fonts.find(name);
+    if (it == fonts.end()) return nullptr;
+
+    return it->second.get();
+}
+
+template<typename T>
+[[maybe_unused]] T sym::Game::put([[maybe_unused]] const std::string &name, [[maybe_unused]] T what) {
+}
+
+template<>
+[[maybe_unused]] SDL_Texture *sym::Game::put(const std::string &name, SDL_Texture *what) {
+    if (!what) return nullptr;
+
+    auto deleter = &SDL_DestroyTexture;
+    std::unique_ptr<SDL_Texture, decltype(deleter)> new_texture{what, deleter};
+    textures.emplace(name, std::move(new_texture));
+    return textures.find(name)->second.get();
+}
+
+template<>
+[[maybe_unused]] TTF_Font *sym::Game::put(const std::string &name, TTF_Font *what) {
+    if (!what) return nullptr;
+
+    auto deleter = &TTF_CloseFont;
+    std::unique_ptr<TTF_Font, decltype(&TTF_CloseFont)> new_font{what, deleter};
+    fonts.emplace(name, std::move(new_font));
+    return fonts.find(name)->second.get();
+}
+
+template<typename T>
+[[maybe_unused]] void sym::Game::free([[maybe_unused]] const std::string &name) {
+}
+
+template<>
+[[maybe_unused]] void sym::Game::free<SDL_Texture *>(const std::string &name) {
+    textures.erase(name);
+}
+
+template<>
+[[maybe_unused]] void sym::Game::free<TTF_Font *>(const std::string &name) {
+    fonts.erase(name);
 }
 
 bool sym::Game::isRunning() {

@@ -8,12 +8,15 @@ ButtonExample::ButtonExample() {
 
     button.onClick = [this] { buttonClick(); };
 
-    button.setTexture(sym::ui::Interaction::None,
-                      sym::Game::loadTexture("button", "../assets/button.png"));
-    button.setTexture(sym::ui::Interaction::Hovering,
-                      sym::Game::loadTexture("button_hover", "../assets/button_hover.png"));
-    button.setTexture(sym::ui::Interaction::Pressing,
-                      sym::Game::loadTexture("button_pressed", "../assets/button_pressed.png"));
+    button.setTexture(
+            sym::ui::Interaction::None,
+            sym::Game::load<SDL_Texture *>("button", "../assets/button.png"));
+    button.setTexture(
+            sym::ui::Interaction::Hovering,
+            sym::Game::load<SDL_Texture *>("button_hover", "../assets/button_hover.png"));
+    button.setTexture(
+            sym::ui::Interaction::Pressing,
+            sym::Game::load<SDL_Texture *>("button_pressed", "../assets/button_pressed.png"));
 }
 
 void ButtonExample::input(SDL_Event &event) {

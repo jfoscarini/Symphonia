@@ -26,11 +26,17 @@ namespace sym {
         static std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)> window;
         static std::unique_ptr<SDL_Renderer, decltype(&SDL_DestroyRenderer)> renderer;
 
-        static std::unordered_map<std::string, std::unique_ptr<TTF_Font, decltype(&TTF_CloseFont)>> fonts;
-        [[maybe_unused]] static void loadFont(const std::string &name, int size, const std::string &path);
-
-        static std::unordered_map<std::string, std::unique_ptr<SDL_Texture, decltype(&SDL_DestroyTexture)>> textures;
-        [[maybe_unused]] static SDL_Texture *loadTexture(const std::string &name, const std::string &path);
+        template <typename T, typename... Args>
+        [[maybe_unused]] static T load(
+                [[maybe_unused]] const std::string &name,
+                [[maybe_unused]] const std::string &path,
+                [[maybe_unused]] Args... args);
+        template <typename T>
+        [[maybe_unused]] static T get([[maybe_unused]] const std::string &name);
+        template <typename T>
+        [[maybe_unused]] static T put([[maybe_unused]] const std::string &name, [[maybe_unused]] T what);
+        template <typename T>
+        [[maybe_unused]] static void free([[maybe_unused]] const std::string &name);
 
         static std::deque<std::unique_ptr<Screen>> new_screens;
 
@@ -41,6 +47,9 @@ namespace sym {
         void handleEvents(SDL_Event &event) const;
 
         std::vector<std::unique_ptr<Screen>> screens;
+
+        static std::unordered_map<std::string, std::unique_ptr<TTF_Font, decltype(&TTF_CloseFont)>> fonts;
+        static std::unordered_map<std::string, std::unique_ptr<SDL_Texture, decltype(&SDL_DestroyTexture)>> textures;
 
         Uint32 sdl_flags = SDL_INIT_EVERYTHING;
         int mix_flags = MIX_INIT_MP3;

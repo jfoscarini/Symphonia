@@ -4,12 +4,12 @@
 #include "../../lib/Game.h"
 
 TextExample::TextExample() {
-    sym::Game::loadFont("upheaval24", 100, "../assets/UpheavalPro.ttf");
+    sym::Game::load<TTF_Font *>("upheaval100", "../assets/UpheavalPro.ttf", 100);
 
     text.attachTo(sym::ui::Anchor::Center);
     text.alignText(sym::ui::Anchor::Center);
 
-    text.setFont("upheaval24");
+    text.setFont("upheaval100");
     text.setText("Hello World!");
 }
 
