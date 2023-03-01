@@ -18,5 +18,5 @@ set(SDL2_ALL ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${SDL2_TTF_LIBRARIES} ${S
 
 add_subdirectory("tests")
 
-add_executable(Symphonia src/main.cpp lib/Game.cpp lib/Game.h lib/Screen.h src/screens/TitleScreen.cpp src/screens/TitleScreen.h lib/ui/Node.cpp lib/ui/Node.h lib/ui/Text.cpp lib/ui/Text.h)
+add_executable(Symphonia src/main.cpp lib/Game.cpp lib/Game.h lib/Screen.h src/screens/TitleScreen.cpp src/screens/TitleScreen.h lib/ui/Node.cpp lib/ui/Node.h lib/ui/Text.cpp lib/ui/Text.h lib/ui/Button.cpp lib/ui/Button.h)
 target_link_libraries(Symphonia ${SDL2_ALL})
