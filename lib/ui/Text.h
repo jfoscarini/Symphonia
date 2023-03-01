@@ -18,7 +18,7 @@ namespace sym::ui {
         void setFont(const std::string &font_name);
         void setText(const std::string &text);
 
-        [[maybe_unused]] void textAlign(Anchor target);
+        [[maybe_unused]] void alignText(Anchor target);
 
         [[maybe_unused]] void draw();
 
@@ -28,6 +28,7 @@ namespace sym::ui {
     private:
         TTF_Font *font{nullptr};
         SDL_Rect rect{0, 0, 0, 0};
+        Anchor text_align = Anchor::None;
         std::unique_ptr<SDL_Texture, decltype(&SDL_DestroyTexture)> texture{nullptr, SDL_DestroyTexture};
     };
 

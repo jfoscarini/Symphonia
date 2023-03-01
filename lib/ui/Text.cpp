@@ -38,39 +38,8 @@ void sym::ui::Text::setText(const std::string &text) {
         SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "Could not query texture for text: \"%s\".", text.c_str());
 }
 
-[[maybe_unused]] void sym::ui::Text::textAlign(sym::ui::Anchor target) {
-    if (!texture) return;
-
-    switch (target) {
-        case Anchor::None:
-        case Anchor::TopLeft:
-            setPosition({0, 0});
-            break;
-        case Anchor::Top:
-            setPosition({-rect.w / 2, 0});
-            break;
-        case Anchor::TopRight:
-            setPosition({-rect.w, 0});
-            break;
-        case Anchor::CenterLeft:
-            setPosition({0, -rect.h / 2});
-            break;
-        case Anchor::Center:
-            setPosition({-rect.w / 2, -rect.h / 2});
-            break;
-        case Anchor::CenterRight:
-            setPosition({-rect.w, -rect.h / 2});
-            break;
-        case Anchor::BottomLeft:
-            setPosition({0, -rect.h});
-            break;
-        case Anchor::Bottom:
-            setPosition({-rect.w / 2, -rect.h});
-            break;
-        case Anchor::BottomRight:
-            setPosition({-rect.w, -rect.h});
-            break;
-    }
+[[maybe_unused]] void sym::ui::Text::alignText(sym::ui::Anchor target) {
+    text_align = target;
 }
 
 [[maybe_unused]] void sym::ui::Text::draw() {
@@ -80,6 +49,40 @@ void sym::ui::Text::setText(const std::string &text) {
     auto position = Node::position();
     target.x += position.x;
     target.y += position.y;
+
+    switch (text_align) {
+        case Anchor::None:
+        case Anchor::TopLeft:
+            break;
+        case Anchor::Top:
+            target.x += -rect.w / 2;
+            break;
+        case Anchor::TopRight:
+            target.x += -rect.w;
+            break;
+        case Anchor::CenterLeft:
+            target.y += -rect.h / 2;
+            break;
+        case Anchor::Center:
+            target.x += -rect.w / 2;
+            target.y += -rect.h / 2;
+            break;
+        case Anchor::CenterRight:
+            target.x += -rect.w;
+            target.y += -rect.h / 2;
+            break;
+        case Anchor::BottomLeft:
+            target.y += -rect.h;
+            break;
+        case Anchor::Bottom:
+            target.x += -rect.w / 2;
+            target.y += -rect.h;
+            break;
+        case Anchor::BottomRight:
+            target.x += -rect.w;
+            target.y += -rect.h;
+            break;
+    }
 
     SDL_SetTextureColorMod(texture.get(), color.r, color.g, color.b);
     SDL_SetTextureAlphaMod(texture.get(), color.a);
