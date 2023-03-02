@@ -28,8 +28,10 @@ namespace sym::ui {
     private:
         TTF_Font *font{nullptr};
         SDL_Rect rect{0, 0, 0, 0};
-        Anchor text_align = Anchor::None;
+        std::function<void(SDL_Rect &target)> text_align;
         std::unique_ptr<SDL_Texture, decltype(&SDL_DestroyTexture)> texture{nullptr, SDL_DestroyTexture};
+
+        static std::array<std::function<void(SDL_Rect &target)>, 10> alignmentFunctions;
     };
 
 }

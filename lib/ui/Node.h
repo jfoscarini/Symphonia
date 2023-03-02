@@ -31,8 +31,10 @@ namespace sym::ui {
 
     private:
         Node *node_parent = nullptr;
-        Anchor node_anchor = Anchor::None;
+        std::function<SDL_Point(SDL_Point nodePosition, int width, int height)> node_anchor;
         SDL_Point node_position{0, 0};
+
+        static std::array<std::function<SDL_Point(SDL_Point nodePosition, int width, int height)>, 10> anchorFunctions;
     };
 
 }

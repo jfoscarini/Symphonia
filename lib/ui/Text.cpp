@@ -1,4 +1,5 @@
 #include <string>
+#include <array>
 
 #include "Text.h"
 #include "../Game.h"
@@ -38,7 +39,8 @@ void sym::ui::Text::setText(const std::string &text) {
 }
 
 [[maybe_unused]] void sym::ui::Text::alignText(sym::ui::Anchor target) {
-    text_align = target;
+    auto idx = static_cast<std::size_t>(target);
+    if (idx < alignmentFunctions.size()) text_align = alignmentFunctions[idx];
 }
 
 [[maybe_unused]] void sym::ui::Text::draw() {
@@ -49,41 +51,22 @@ void sym::ui::Text::setText(const std::string &text) {
     target.x += position.x;
     target.y += position.y;
 
-    switch (text_align) {
-        case Anchor::None:
-        case Anchor::TopLeft:
-            break;
-        case Anchor::Top:
-            target.x += -rect.w / 2;
-            break;
-        case Anchor::TopRight:
-            target.x += -rect.w;
-            break;
-        case Anchor::CenterLeft:
-            target.y += -rect.h / 2;
-            break;
-        case Anchor::Center:
-            target.x += -rect.w / 2;
-            target.y += -rect.h / 2;
-            break;
-        case Anchor::CenterRight:
-            target.x += -rect.w;
-            target.y += -rect.h / 2;
-            break;
-        case Anchor::BottomLeft:
-            target.y += -rect.h;
-            break;
-        case Anchor::Bottom:
-            target.x += -rect.w / 2;
-            target.y += -rect.h;
-            break;
-        case Anchor::BottomRight:
-            target.x += -rect.w;
-            target.y += -rect.h;
-            break;
-    }
+    if (text_align) text_align(target);
 
     SDL_SetTextureColorMod(texture.get(), color.r, color.g, color.b);
     SDL_SetTextureAlphaMod(texture.get(), color.a);
     SDL_RenderCopy(Game::renderer.get(), texture.get(), nullptr, &target);
 }
+
+std::array<std::function<void(SDL_Rect &target)>, 10> sym::ui::Text::alignmentFunctions = {
+        nullptr,
+        nullptr,
+        [](SDL_Rect &target) { target.x -= target.w / 2; },
+        [](SDL_Rect &target) { target.x -= target.w; },
+        [](SDL_Rect &target) { target.y -= target.h / 2; },
+        [](SDL_Rect &target) { target.x -= target.w / 2; target.y -= target.h / 2; },
+        [](SDL_Rect &target) { target.x -= target.w; target.y -= target.h / 2; },
+        [](SDL_Rect &target) { target.y -= target.h; },
+        [](SDL_Rect &target) { target.x -= target.w / 2; target.y -= target.h;},
+        [](SDL_Rect &target) { target.x -= target.w; target.y -= target.h;}
+};
